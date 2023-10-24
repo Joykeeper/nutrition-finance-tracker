@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Arrays;
 
 public class GUI {
     NutritionManager nutritionManager;
@@ -39,13 +38,10 @@ public class GUI {
         JButton button = new JButton("Count");
         JLabel labelForMoney = new JLabel("Money:");
         JLabel labelForTime = new JLabel("Time:");
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                labelForMoney.setText("Money: " + Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
-                labelForTime.setText("Time:" + Evaluator.countTime(nutritionManager.getCookedMeals()));
-                System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
-            }
+        button.addActionListener(e -> {
+            labelForMoney.setText("Money: " + Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
+            labelForTime.setText("Time:" + Evaluator.countTime(nutritionManager.getCookedMeals()));
+            System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
         });
 
         countPanel.add(button);
@@ -109,12 +105,9 @@ public class GUI {
 
         comboBox.setSelectedItem(nutritionManager.getSelectedMealsMap().get(dayOfTheWeek)[numberOfFood].getName());
         // add ItemListener
-        comboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                nutritionManager.selectMeal(mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
-                System.out.println("Selected meal: " + comboBox.getSelectedItem());
-            }
+        comboBox.addItemListener(e -> {
+            nutritionManager.selectMeal(mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
+            System.out.println("Selected meal: " + comboBox.getSelectedItem());
         });
         return comboBox;
     }

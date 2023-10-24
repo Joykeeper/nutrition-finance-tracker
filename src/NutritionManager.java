@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class NutritionManager {
             put("Sunday", new Meal[]{nothing, nothing, nothing});
         }
     };
-    public void selectMeal(int m, String day, int numberOfFood){
+    public void selectNoMeal(String day, int numberOfFood){
         selectedMealsMap.get(day)[numberOfFood] = nothing;
     }
     public void selectMeal(Meal meal, String day, int numberOfFood){
@@ -43,7 +42,7 @@ public class NutritionManager {
         Map<Meal, Integer> leftoversMap = new HashMap<>();
         int amountOfLeftover;
         for (Meal m: getMealCountMap().keySet()) {
-            if (m.getName() == "Nothing"){
+            if (m.getName().equals("Nothing")){
                 continue;
             }
             amountOfLeftover = m.getPortions() - getMealCountMap().get(m)%m.getPortions();
