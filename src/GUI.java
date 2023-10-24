@@ -18,6 +18,7 @@ public class GUI {
 
         frame.getContentPane().add(BorderLayout.CENTER, createFoodTablePanel());
         frame.getContentPane().add(BorderLayout.EAST, createCountPanel());
+        frame.getContentPane().add(BorderLayout.SOUTH, createAdditionalInfoPanel());
 
         frame.setSize(1000,1000);
         frame.setVisible(true);
@@ -57,9 +58,43 @@ public class GUI {
         JPanel additionalInfoPanel = new JPanel();
         additionalInfoPanel.setLayout(new BoxLayout(additionalInfoPanel, BoxLayout.Y_AXIS));
 
-        JLabel selectedMealsCountLabel = new JLabel("Selected meals count");
+        JLabel selectedMealsCountLabel = new JLabel("Selected meals count: ");
+        JLabel leftoversLabel = new JLabel("Leftover meals count: ");
+        JLabel productsLabel = new JLabel("Needed products: ");
+
+        JLabel[] additionalInfoValues = getAdditionalInfoLabels();
+
+        additionalInfoPanel.add(selectedMealsCountLabel);
+        additionalInfoPanel.add(additionalInfoValues[0]);
+        additionalInfoPanel.add(leftoversLabel);
+        additionalInfoPanel.add(additionalInfoValues[1]);
+        additionalInfoPanel.add(productsLabel);
+        additionalInfoPanel.add(additionalInfoValues[2]);
 
         return additionalInfoPanel;
+    }
+    private JLabel[] getAdditionalInfoLabels(){
+        JLabel[] labels = new JLabel[3];
+
+        JLabel selectedMeals = new JLabel();
+        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+            selectedMeals.setText(selectedMeals.getText() + "; " + meal.getName() + " : " + nutritionManager.getMealCountMap().get(meal));
+        }
+
+        JLabel leftovers = new JLabel();
+        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+            leftovers.setText(leftovers.getText() + "; " + meal.getName() + " : " + nutritionManager.getLeftOvers().get(meal));
+        }
+
+        JLabel products = new JLabel();//???
+        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+            products.setText(products.getText() + "; " + meal.getName() + " : " + nutritionManager.getLeftOvers().get(meal));
+        }
+        labels[0] = selectedMeals;
+        labels[1] = leftovers;
+        labels[2] = products;
+
+        return labels;
     }
     private JComboBox createChoiceBar(String dayOfTheWeek, int numberOfFood){
         String[] namesOfMeals = new String[mealManager.getAvailableMeals().size()+1];

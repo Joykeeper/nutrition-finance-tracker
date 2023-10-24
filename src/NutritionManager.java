@@ -43,6 +43,9 @@ public class NutritionManager {
         Map<Meal, Integer> leftoversMap = new HashMap<>();
         int amountOfLeftover;
         for (Meal m: getMealCountMap().keySet()) {
+            if (m.getName() == "Nothing"){
+                continue;
+            }
             amountOfLeftover = m.getPortions() - getMealCountMap().get(m)%m.getPortions();
             leftoversMap.put(m, amountOfLeftover);
         }
