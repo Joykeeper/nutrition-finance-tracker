@@ -106,8 +106,11 @@ public class GUI {
         comboBox.setSelectedItem(nutritionManager.getSelectedMealsMap().get(dayOfTheWeek)[numberOfFood].getName());
         // add ItemListener
         comboBox.addItemListener(e -> {
-            nutritionManager.selectMeal(mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
-            System.out.println("Selected meal: " + comboBox.getSelectedItem());
+            if (comboBox.getSelectedItem() == "Nothing"){
+                nutritionManager.selectNoMeal(dayOfTheWeek, numberOfFood);
+            } else{
+                nutritionManager.selectMeal(mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
+            }
         });
         return comboBox;
     }
