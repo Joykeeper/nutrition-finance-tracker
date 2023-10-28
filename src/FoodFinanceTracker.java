@@ -15,7 +15,6 @@ public class FoodFinanceTracker {
                         new Ingredient("Bread", 3f),
                         new Ingredient("Cheese", 1f),
                 }, 5));
-        mealManager.addMeal(new Meal("Nothing", 0, new Ingredient[]{},0));
 
         ProductManager productManager = new ProductManager(new ArrayList<Product>(){
             {
@@ -45,9 +44,8 @@ public class FoodFinanceTracker {
 
         GUI gui = new GUI(nutritionManager, productManager, mealManager, ingredientManager);
         gui.setUpGUI();
-        gui.setUpAddMealFrame();
-        gui.setUpAddProductFrame();
-        gui.setUpAddIngredientFrame();
+        gui.setUpCardLayout();
+
         //System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
         //System.out.println(Evaluator.countTime(nutritionManager.getCookedMeals()));
     }

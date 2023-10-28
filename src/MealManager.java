@@ -3,7 +3,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MealManager {
-    private Map<String, Meal> availableMeals = new HashMap<>();
+    private Map<String, Meal> availableMeals = new HashMap<>(){
+        {
+            put("Nothing", new Meal("Nothing", 0, new Ingredient[]{},0));
+        }
+    };
     public MealManager(Map<String, Meal> availableMeals){
         this.availableMeals = availableMeals;
     }

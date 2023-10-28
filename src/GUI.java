@@ -42,28 +42,16 @@ public class GUI {
         frame.setSize(1000,1000);
         frame.setVisible(true);
     }
-    public void setUpAddProductFrame(){
-        JFrame frame = new JFrame("Add product");
-        frame.getContentPane().add(BorderLayout.CENTER, createAddProductPanel());
+    public void setUpCardLayout(){
+        JFrame addSthFrame = new JFrame("Add");
+        JTabbedPane addSthPane = new JTabbedPane();
+        addSthPane.addTab("Add meal", null, createAddMealPanel());
+        addSthPane.addTab("Add product", null, createAddProductPanel());
+        addSthPane.addTab("Add ingredient", null, createAddIngredientPanel());
 
-        frame.setSize(500,250);
-        frame.setVisible(true);
-    }
-    public void setUpAddIngredientFrame(){
-        JFrame frame = new JFrame("Add ingredient");
-
-        frame.getContentPane().add(BorderLayout.CENTER, createAddIngredientPanel());
-
-        frame.setSize(500,250);
-        frame.setVisible(true);
-    }
-    public void setUpAddMealFrame(){
-        JFrame frame = new JFrame("Add meal");
-
-        frame.getContentPane().add(BorderLayout.CENTER, createAddMealPanel());
-
-        frame.setSize(500,285);
-        frame.setVisible(true);
+        addSthFrame.add(addSthPane, BorderLayout.CENTER);
+        addSthFrame.setSize(500,500);
+        addSthFrame.setVisible(true);
     }
     public JPanel createAddProductPanel(){
         JPanel panel = new JPanel();
@@ -85,8 +73,15 @@ public class GUI {
 
         addProduct.addActionListener(e -> {
             productManager.addProduct(new Product(name.getText(),
-                    new Ingredient((String) containingIngredient.getSelectedItem(),Integer.parseInt(amountOfIngredient.getText())),
-                    Integer.parseInt(cost.getText())));
+                    new Ingredient((String) containingIngredient.getSelectedItem(),
+                            Float.parseFloat(amountOfIngredient.getText())),
+                    Float.parseFloat(cost.getText())));
+
+            /*
+            for (Product p:productManager.getAvailableProducts()) {
+                System.out.println(p.getName());
+            }
+            */
         });
 
         {
@@ -124,8 +119,15 @@ public class GUI {
         addIngredient.addActionListener(e -> {
             ingredientManager.addIngredient(ingredientName.getText());
             productManager.addProduct(new Product(productName.getText(),
-                    new Ingredient(ingredientName.getText(),Integer.parseInt(amountOfIngredient.getText())),
-                    Integer.parseInt(cost.getText())));
+                    new Ingredient(ingredientName.getText(),Float.parseFloat(amountOfIngredient.getText())),
+                    Float.parseFloat(cost.getText())));
+
+            for (Product p:productManager.getAvailableProducts()) {
+                System.out.println(p.getName());
+            }
+            for (String ing:ingredientManager.getAvailableIngredients()) {
+                System.out.println(ing);
+            }
         });
 
         {
@@ -162,9 +164,28 @@ public class GUI {
         JLabel requiredTimeLabel = new JLabel("Time for cooking: ");
         JTextField requiredTime = new JTextField();
 
-        JButton addMeal = new JButton("Add meal");
-
         JPanel ingredientsPanel = new JPanel();
+
+        JButton addMeal = new JButton("Add meal");
+        addMeal.addActionListener(e -> {
+            Component[] components = ingredientsPanel.getComponents();
+            Ingredient[] ingredients = new Ingredient[components.length/4];
+            for (Component comp:components) {
+                System.out.println(comp);
+            }
+            for (int i = 0; i < components.length/4; i+=1) {
+                ingredients[i] = new Ingredient( (String) ((JComboBox) components[i*4+1]).getSelectedItem(),
+                        Float.parseFloat(((JTextField) components[i*4+3]).getText()));
+            }
+
+            mealManager.addMeal(new Meal(mealName.getText(),
+                    Integer.parseInt(requiredTime.getText()),
+                    ingredients,
+                    Integer.parseInt(portions.getText())));
+            System.out.println(mealManager.getAvailableMeals());
+        });
+
+
         ingredientsPanel.setLayout(new BoxLayout(ingredientsPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(ingredientsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scroll.setMinimumSize(new Dimension(200, 200));
