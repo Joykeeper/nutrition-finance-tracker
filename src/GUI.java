@@ -6,21 +6,218 @@ public class GUI {
     NutritionManager nutritionManager;
     ProductManager productManager;
     MealManager mealManager;
+    IngredientManager ingredientManager;
     String[] daysOfTheWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    public GUI(NutritionManager nutritionManager, ProductManager productManager, MealManager mealManager){
+    public GUI(NutritionManager nutritionManager, ProductManager productManager, MealManager mealManager, IngredientManager ingredientManager){
         this.nutritionManager = nutritionManager;
         this.productManager = productManager;
         this.mealManager = mealManager;
+        this.ingredientManager  = ingredientManager;
     }
     public void setUpGUI(){
         JFrame frame = new JFrame();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        frame.getContentPane().add(BorderLayout.CENTER, createFoodTablePanel());
-        frame.getContentPane().add(BorderLayout.EAST, createCountPanel());
-        frame.getContentPane().add(BorderLayout.SOUTH, createAdditionalInfoPanel());
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        mainPanel.add(createFoodTablePanel(),gbc);
+
+        gbc.fill = GridBagConstraints.CENTER;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        mainPanel.add(createCountPanel(),gbc);
+
+        gbc.fill = GridBagConstraints.EAST;
+        gbc.gridx = 0;
+        gbc.gridy = 1;gbc.gridwidth = 1;
+        mainPanel.add(createAdditionalInfoPanel(),gbc);
+
+        frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
 
         frame.setSize(1000,1000);
         frame.setVisible(true);
+    }
+    public void setUpAddProductFrame(){
+        JFrame frame = new JFrame("Add product");
+        frame.getContentPane().add(BorderLayout.CENTER, createAddProductPanel());
+
+        frame.setSize(500,250);
+        frame.setVisible(true);
+    }
+    public void setUpAddIngredientFrame(){
+        JFrame frame = new JFrame("Add ingredient");
+
+        frame.getContentPane().add(BorderLayout.CENTER, createAddIngredientPanel());
+
+        frame.setSize(500,250);
+        frame.setVisible(true);
+    }
+    public void setUpAddMealFrame(){
+        JFrame frame = new JFrame("Add meal");
+
+        frame.getContentPane().add(BorderLayout.CENTER, createAddMealPanel());
+
+        frame.setSize(500,285);
+        frame.setVisible(true);
+    }
+    public JPanel createAddProductPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JButton addProduct = new JButton("Add product");
+
+        JLabel nameLabel = new JLabel("Name of product: ");
+        JTextField name = new JTextField();
+
+        JLabel ingredientLabel = new JLabel("Ingredient: ");
+        JComboBox containingIngredient = new JComboBox(ingredientManager.getAvailableIngredients().toArray());
+
+        JLabel amountLabel = new JLabel("Amount of ingredient: ");
+        JTextField amountOfIngredient = new JTextField();
+
+        JLabel costLabel = new JLabel("Cost of product: ");
+        JTextField cost = new JTextField();
+
+        addProduct.addActionListener(e -> {
+            productManager.addProduct(new Product(name.getText(),
+                    new Ingredient((String) containingIngredient.getSelectedItem(),Integer.parseInt(amountOfIngredient.getText())),
+                    Integer.parseInt(cost.getText())));
+        });
+
+        {
+            panel.add(nameLabel);
+            panel.add(name);
+            panel.add(ingredientLabel);
+            panel.add(containingIngredient);
+            panel.add(amountLabel);
+            panel.add(amountOfIngredient);
+            panel.add(costLabel);
+            panel.add(cost);
+            panel.add(addProduct);
+        } // adding components to panel
+
+        return panel;
+    }
+    public JPanel createAddIngredientPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JButton addIngredient = new JButton("Add ingredient and new product");
+
+        JLabel ingredientNameLabel = new JLabel("Name of ingredient: ");
+        JTextField ingredientName = new JTextField();
+
+        JLabel productNameLabel = new JLabel("Name of product: ");
+        JTextField productName = new JTextField();
+
+        JLabel amountLabel = new JLabel("Amount of ingredient: ");
+        JTextField amountOfIngredient = new JTextField();
+
+        JLabel costLabel = new JLabel("Cost of product: ");
+        JTextField cost = new JTextField();
+
+        addIngredient.addActionListener(e -> {
+            ingredientManager.addIngredient(ingredientName.getText());
+            productManager.addProduct(new Product(productName.getText(),
+                    new Ingredient(ingredientName.getText(),Integer.parseInt(amountOfIngredient.getText())),
+                    Integer.parseInt(cost.getText())));
+        });
+
+        {
+            panel.add(ingredientNameLabel);
+            panel.add(ingredientName);
+            panel.add(productNameLabel);
+            panel.add(productName);
+            panel.add(amountLabel);
+            panel.add(amountOfIngredient);
+            panel.add(costLabel);
+            panel.add(cost);
+            panel.add(addIngredient);
+        }//adding components to panel
+
+        return panel;
+    }
+    public JPanel createAddMealPanel(){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        JPanel subPanel1 = new JPanel();
+        subPanel1.setLayout(new BoxLayout(subPanel1, BoxLayout.Y_AXIS));
+        JPanel subPanel2 = new JPanel();
+        subPanel2.setLayout(new BoxLayout(subPanel2, BoxLayout.Y_AXIS));
+
+
+        JLabel mealNameLabel = new JLabel("Name of meal: ");
+        JTextField mealName = new JTextField();
+
+        JLabel portionsLabel = new JLabel("Amount of portions: ");
+        JTextField portions = new JTextField();
+
+        JLabel requiredTimeLabel = new JLabel("Time for cooking: ");
+        JTextField requiredTime = new JTextField();
+
+        JButton addMeal = new JButton("Add meal");
+
+        JPanel ingredientsPanel = new JPanel();
+        ingredientsPanel.setLayout(new BoxLayout(ingredientsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scroll = new JScrollPane(ingredientsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scroll.setMinimumSize(new Dimension(200, 200));
+        JButton addIngredient = new JButton("Add ingredient");
+        addIngredient.addActionListener(e -> {
+            JLabel ingredientNameLabel = new JLabel("Ingredient:");
+            JComboBox ingredientName = new JComboBox(ingredientManager.getAvailableIngredients().toArray());
+
+            JLabel amountLabel = new JLabel("Amount");
+            JTextField amount = new JTextField();
+
+            ingredientsPanel.add(ingredientNameLabel);
+            ingredientsPanel.add(ingredientName);
+            ingredientsPanel.add(amountLabel);
+            ingredientsPanel.add(amount);
+
+
+            ingredientsPanel.revalidate();
+            subPanel2.revalidate();
+        });
+        addIngredient.doClick();
+
+        {
+            subPanel1.add(mealNameLabel);
+            subPanel1.add(mealName);
+            subPanel1.add(portionsLabel);
+            subPanel1.add(portions);
+            subPanel1.add(requiredTimeLabel);
+            subPanel1.add(requiredTime);
+
+            subPanel2.add(addIngredient);
+            subPanel2.add(scroll);
+
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridheight = 4;
+            panel.add(subPanel1, gbc);
+
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = 1;
+            gbc.gridy = 0;
+            gbc.gridheight = 4;
+            panel.add(subPanel2, gbc);
+
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = 0;
+            gbc.gridy = 4;
+            gbc.gridwidth = 2;
+            panel.add(addMeal, gbc);
+        }// adding components to panel
+
+        return panel;
     }
     private JPanel createFoodTablePanel(){
         JPanel foodTablePanel = new JPanel();

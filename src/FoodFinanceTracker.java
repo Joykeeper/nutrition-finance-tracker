@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class FoodFinanceTracker {
     public static void main(String[] args) {
-
+        IngredientManager ingredientManager = new IngredientManager();
         MealManager mealManager = new MealManager();
         mealManager.addMeal(new Meal("Scrambled eggs", 25,
                 new Ingredient[]{
@@ -43,8 +43,11 @@ public class FoodFinanceTracker {
                 System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
         }
 
-        GUI gui = new GUI(nutritionManager, productManager, mealManager);
+        GUI gui = new GUI(nutritionManager, productManager, mealManager, ingredientManager);
         gui.setUpGUI();
+        gui.setUpAddMealFrame();
+        gui.setUpAddProductFrame();
+        gui.setUpAddIngredientFrame();
         //System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
         //System.out.println(Evaluator.countTime(nutritionManager.getCookedMeals()));
     }
