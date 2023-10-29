@@ -1,9 +1,20 @@
+import java.io.*;
 import java.util.ArrayList;
 
-public class FoodFinanceTracker {
-    public static void main(String[] args) {
-        IngredientManager ingredientManager = new IngredientManager();
-        MealManager mealManager = new MealManager();
+public class FoodFinanceTracker{
+    public IngredientManager ingredientManager;
+    public ProductManager productManager;
+    public MealManager mealManager;
+    public NutritionManager nutritionManager;
+    GUI gui;
+    public FoodFinanceTracker(){
+        this.ingredientManager = new IngredientManager();
+        this.mealManager = new MealManager();
+        this.productManager = new ProductManager();
+        this.nutritionManager = new NutritionManager();
+    }
+    public void run() {
+
         mealManager.addMeal(new Meal("Scrambled eggs", 25,
                 new Ingredient[]{
                         new Ingredient("Egg", 2f),
@@ -16,38 +27,48 @@ public class FoodFinanceTracker {
                         new Ingredient("Cheese", 1f),
                 }, 5));
 
-        ProductManager productManager = new ProductManager(new ArrayList<Product>(){
-            {
-                add(new Product("10 Eggs", new Ingredient("Egg", 10f), 7f));
-                add(new Product("2 Cheeses", new Ingredient("Cheese", 2f), 3f));
-                add(new Product("15 Cheeses", new Ingredient("Cheese", 15f), 6f));
-                add(new Product("Milk 2l", new Ingredient("Milk", 2f), 4f));
-                add(new Product("Bread 4", new Ingredient("Bread", 4f), 5.5f));
-                add(new Product("Bread 1", new Ingredient("Bread", 1f), 2.5f));
-                add(new Product("Salt 1", new Ingredient("Salt", 1f), 1f));
-            }
-        });
-
-        NutritionManager nutritionManager = new NutritionManager();
-
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Scrambled eggs"), "Monday", 2);
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Scrambled eggs"), "Monday", 1);
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Scrambled eggs"), "Monday", 0);
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Sandwich"), "Tuesday", 0);
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Sandwich"), "Tuesday", 1);
-        nutritionManager.selectMeal(mealManager.getAvailableMeals().get("Scrambled eggs"), "Tuesday", 2);
-
-
-        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
-                System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
-        }
-
-        GUI gui = new GUI(nutritionManager, productManager, mealManager, ingredientManager);
-        gui.setUpGUI();
-        gui.setUpCardLayout();
+//        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+//                System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
+//        }
 
         //System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
         //System.out.println(Evaluator.countTime(nutritionManager.getCookedMeals()));
     }
+    public void save(){
+        try {
+            FileOutputStream fileStream = new FileOutputStream(new File("Checkbox.ser"));
+            ObjectOutputStream os = new ObjectOutputStream(fileStream);
+            os.writeObject(this.mealManager);
+            os.writeObject(this.productManager);
+            os.writeObject(this.ingredientManager);
+            os.writeObject(this.nutritionManager);
+            os.close();
 
+        } catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void load(){
+        try {
+            FileInputStream fileIn = new FileInputStream(new File("Checkbox.ser"));
+            ObjectInputStream ois = new ObjectInputStream(fileIn);
+
+//            System.out.println("Preload");
+//            for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+//                System.out.println(meal.getName() + nutritionManager.getMealCountMap().get(meal));
+//            }
+
+            this.mealManager = (MealManager) ois.readObject();
+            this.productManager = (ProductManager) ois.readObject();
+            this.ingredientManager = (IngredientManager) ois.readObject();
+            this.nutritionManager = (NutritionManager) ois.readObject();
+            ois.close();
+
+//            System.out.println("Postload");
+//            for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+//                System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
+//            }
+
+        } catch(Exception ex) {ex.printStackTrace();}
+    }
 }

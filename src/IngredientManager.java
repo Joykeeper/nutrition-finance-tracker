@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IngredientManager {
+public class IngredientManager implements Serializable {
     private ArrayList<String> availableIngredients = new ArrayList<>(){
         {
             add("Egg");

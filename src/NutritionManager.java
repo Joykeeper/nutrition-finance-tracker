@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NutritionManager {
+public class NutritionManager implements Serializable {
     Meal nothing = new Meal("Nothing", 0, new Ingredient[]{},0);
     Map<String, Meal[]> selectedMealsMap = new HashMap<>(){
         {
