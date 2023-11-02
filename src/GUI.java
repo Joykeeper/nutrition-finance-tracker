@@ -335,7 +335,7 @@ public class GUI {
         }
 
         JLabel products = new JLabel();//???
-        Map<String, Number> neededProducts = Evaluator.getNeededProducts(fft.nutritionManager.getCookedMeals(), fft.productManager);
+        Map<String, Number> neededProducts = Evaluator.getNeededProducts(fft.nutritionManager.getCookedMeals(), fft.productManager.getAvailableProducts());
         for (String product:neededProducts.keySet()) {
                 String t = products.getText().equals("") ? "" : products.getText() + "; ";
                 products.setText(t + product + " : " + neededProducts.get(product));

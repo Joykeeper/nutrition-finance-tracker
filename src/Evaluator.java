@@ -40,7 +40,7 @@ public class Evaluator {
         return money;
     }
     private static ArrayList<Product> findProductsForIngredient(String ingredient, ArrayList<Product> products){
-        ArrayList<Product> productsForIngredient = new ArrayList<Product>();
+        ArrayList<Product> productsForIngredient = new ArrayList<>();
         for (Product p: products){
             if (p.getIngredient().getName().equals(ingredient)){
                 productsForIngredient.add(p);
@@ -54,7 +54,7 @@ public class Evaluator {
         return productsForIngredient;
     }
     private static Map<String, Number> getIngredientMap(ArrayList<Meal> selectedMeals){
-        Map<String, Number> ingredients = new HashMap<String, Number>();
+        Map<String, Number> ingredients = new HashMap<>();
 
         for(Meal meal: selectedMeals){
             for (Ingredient ing:meal.getIngredients()){
@@ -69,35 +69,9 @@ public class Evaluator {
 
         return ingredients;
     }
-    public static Map<String, Number> getNeededProducts(ArrayList<Meal> selectedMeals, ProductManager productManager){
-        float money = 0;
-
+    public static Map<String, Number> getNeededProducts(ArrayList<Meal> selectedMeals, ArrayList<Product> availableProducts){
+        //not done
         Map<String, Number> neededProducts = new HashMap<>();
-
-        Map<String, Number> ingredients = getIngredientMap(selectedMeals); // +
-        //System.out.println(ingredients.keySet());
-        for (String ing: ingredients.keySet()) {
-            ArrayList<Product> products = findProductsForIngredient(ing, productManager.getAvailableProducts()); // +
-
-            int index = 0;
-            for (Product product: products) {
-                int amountOfProductsNeeded = (int) ((float) ingredients.get(ing) / product.getIngredient().getAmount());
-                money += product.getCost() * amountOfProductsNeeded;
-
-                //System.out.println("Product: " + product.getName() + "; needed amount:" + amountOfProductsNeeded);
-                ingredients.put(ing, (float) ingredients.get(ing) - amountOfProductsNeeded*product.getIngredient().getAmount());
-                //System.out.println(ingredients.get(ing));
-
-                if ((index == products.size() - 1)&&((float)ingredients.get(ing) > 0)){
-                    money += product.getCost();
-                    //System.out.println("Product: " + product.getName() + "; needed amount 0 to 1");
-                    amountOfProductsNeeded += 1;
-                }
-                neededProducts.put(product.getName(), amountOfProductsNeeded);
-                //System.out.println("Money: " + money + "(+" + product.getCost() + "*" + amountOfProductsNeeded +")");
-                index += 1;
-            }
-        }
         return neededProducts;
     }
     public static float countMoneyPlus(ArrayList<Meal> selectedMeals, ProductManager productManager){
