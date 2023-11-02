@@ -46,10 +46,15 @@ public class NutritionManager implements Serializable {
             if (m.getName().equals("Nothing")){
                 continue;
             }
-            amountOfLeftover = m.getPortions() - getMealCountMap().get(m)%m.getPortions();
-            leftoversMap.put(m, amountOfLeftover);
+            if (getMealCountMap().get(m)%m.getPortions() == 0){
+                leftoversMap.remove(m);
+            } else {
+                amountOfLeftover = m.getPortions() - getMealCountMap().get(m)%m.getPortions();
+                leftoversMap.put(m, amountOfLeftover);
+            }
         }
         return leftoversMap;
+
     }
     public ArrayList<Meal> getCookedMeals(){
         ArrayList<Meal> cookedMeals = new ArrayList<>();

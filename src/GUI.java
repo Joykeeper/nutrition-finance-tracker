@@ -1,10 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
 
 public class GUI {
     JFrame mainFrame;
-    JFrame addSthFrame;
     FoodFinanceTracker fft;
     String[] daysOfTheWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     public GUI(FoodFinanceTracker fft){
@@ -23,36 +23,43 @@ public class GUI {
             System.out.println("Saved");
         });
         menu.add(saveMenuItem);
-        JMenuItem loadMenuItem = new JMenuItem("Load");
+        JMenuItem loadMenuItem = new JMenuItem("Load", KeyEvent.VK_L);
         loadMenuItem.addActionListener(e -> {
-            /*
-            for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
-                System.out.println(meal.getName() + " " + fft.nutritionManager.getMealCountMap().get(meal));
-            }
-
-             */
             this.fft.load();
             this.updateGUI();
             System.out.println("Loaded");
             for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
                 System.out.println(meal.getName() + " " + fft.nutritionManager.getMealCountMap().get(meal));
             }
+            /*
+            for (Product p: fft.productManager.getAvailableProducts()) {
+                System.out.println(p.getName() + " : " + p.getCost());
+            }
+             */
         });
         menu.add(loadMenuItem);
 
         mainFrame.getContentPane().add(BorderLayout.NORTH, menuBar);
-        mainFrame.getContentPane().add(BorderLayout.CENTER, createMainPanel());
+        mainFrame.getContentPane().add(BorderLayout.CENTER, createMainCardLayout());
 
 
         mainFrame.setSize(1000,1000);
         mainFrame.setVisible(true);
     }
+    private JTabbedPane createMainCardLayout(){
+        JTabbedPane mainCardLayout = new JTabbedPane();
+        mainCardLayout.addTab("Main", null, createMainPanel());
+        mainCardLayout.addTab("Add meal", null, createAddMealPanel());
+        mainCardLayout.addTab("Add product", null, createAddProductPanel());
+        mainCardLayout.addTab("Add ingredient", null, createAddIngredientPanel());
+        return mainCardLayout;
+    }
     private void updateGUI(){
         mainFrame.getContentPane().remove(mainFrame.getContentPane().getComponents()[1]);
-        mainFrame.getContentPane().add(BorderLayout.CENTER, createMainPanel());
+        mainFrame.getContentPane().add(BorderLayout.CENTER, createMainCardLayout());
         mainFrame.revalidate();
     }
-    public JPanel createMainPanel(){
+    private JPanel createMainPanel(){
         JPanel mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridBagLayout());
@@ -78,27 +85,6 @@ public class GUI {
 
         return mainPanel;
     }
-    public void setUpCardLayout(){
-        addSthFrame = new JFrame("Add");
-        JTabbedPane addSthPane = new JTabbedPane();
-        addSthPane.addTab("Add meal", null, createAddMealPanel());
-        addSthPane.addTab("Add product", null, createAddProductPanel());
-        addSthPane.addTab("Add ingredient", null, createAddIngredientPanel());
-
-        addSthFrame.getContentPane().add(BorderLayout.CENTER, addSthPane);
-        addSthFrame.setSize(500,500);
-        addSthFrame.setVisible(true);
-    }
-    private void updateCardLayout(){
-        addSthFrame.getContentPane().remove(addSthFrame.getContentPane().getComponents()[0]);
-        JTabbedPane addSthPane = new JTabbedPane();
-        addSthPane.addTab("Add meal", null, createAddMealPanel());
-        addSthPane.addTab("Add product", null, createAddProductPanel());
-        addSthPane.addTab("Add ingredient", null, createAddIngredientPanel());
-
-        addSthFrame.getContentPane().add(BorderLayout.CENTER, addSthPane);
-        addSthFrame.revalidate();
-    }
     public JPanel createAddProductPanel(){
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -122,12 +108,7 @@ public class GUI {
                     new Ingredient((String) containingIngredient.getSelectedItem(),
                             Float.parseFloat(amountOfIngredient.getText())),
                     Float.parseFloat(cost.getText())));
-
-            /*
-            for (Product p:fft.productManager.getAvailableProducts()) {
-                System.out.println(p.getName());
-            }
-            */
+            this.updateGUI();
         });
 
         {
@@ -174,7 +155,7 @@ public class GUI {
             for (String ing:fft.ingredientManager.getAvailableIngredients()) {
                 System.out.println(ing);
             }
-            this.updateCardLayout();
+            this.updateGUI();
             //this.setUpCardLayout();
         });
 
@@ -309,6 +290,7 @@ public class GUI {
             labelForMoney.setText("Money: " + Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
             labelForTime.setText("Time:" + Evaluator.countTime(fft.nutritionManager.getCookedMeals()));
             System.out.println(Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
+            System.out.println(Evaluator.countMoneyPlus(fft.nutritionManager.getCookedMeals(), fft.productManager));
         });
 
         countPanel.add(button);
@@ -347,19 +329,16 @@ public class GUI {
         }
 
         JLabel leftovers = new JLabel();
-        for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
-            if (!meal.getName().equals("Nothing")) {
-                String t = leftovers.getText().equals("") ? "" : leftovers.getText() + "; ";
-                leftovers.setText(t + meal.getName() + " : " + fft.nutritionManager.getLeftOvers().get(meal));
-            }
+        for (Meal meal:fft.nutritionManager.getLeftOvers().keySet()) {
+            String t = leftovers.getText().equals("") ? "" : leftovers.getText() + "; ";
+            leftovers.setText(t + meal.getName() + " : " + fft.nutritionManager.getLeftOvers().get(meal));
         }
 
         JLabel products = new JLabel();//???
-        for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
-            if (!meal.getName().equals("Nothing")) {
+        Map<String, Number> neededProducts = Evaluator.getNeededProducts(fft.nutritionManager.getCookedMeals(), fft.productManager);
+        for (String product:neededProducts.keySet()) {
                 String t = products.getText().equals("") ? "" : products.getText() + "; ";
-                products.setText(t + meal.getName() + " : " + fft.nutritionManager.getLeftOvers().get(meal));
-            }
+                products.setText(t + product + " : " + neededProducts.get(product));
         }
         labels[0] = selectedMeals;
         labels[1] = leftovers;
@@ -391,7 +370,7 @@ public class GUI {
             } else{
                 fft.nutritionManager.selectMeal(fft.mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
             }
-            //this.updateGUI();
+            this.updateGUI();
         });
         return comboBox;
     }

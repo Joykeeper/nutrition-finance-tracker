@@ -7,6 +7,5 @@ public class Main {
 
         GUI gui = new GUI(foodFinanceTracker);
         gui.setUpGUI();
-        gui.setUpCardLayout();
     }
 }
