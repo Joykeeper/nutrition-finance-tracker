@@ -28,14 +28,6 @@ public class GUI {
             this.fft.load();
             this.updateGUI();
             System.out.println("Loaded");
-            for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
-                System.out.println(meal.getName() + " " + fft.nutritionManager.getMealCountMap().get(meal));
-            }
-            /*
-            for (Product p: fft.productManager.getAvailableProducts()) {
-                System.out.println(p.getName() + " : " + p.getCost());
-            }
-             */
         });
         menu.add(loadMenuItem);
 
@@ -156,7 +148,6 @@ public class GUI {
                 System.out.println(ing);
             }
             this.updateGUI();
-            //this.setUpCardLayout();
         });
 
         {
@@ -290,7 +281,7 @@ public class GUI {
             labelForMoney.setText("Money: " + Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
             labelForTime.setText("Time:" + Evaluator.countTime(fft.nutritionManager.getCookedMeals()));
             System.out.println(Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
-            System.out.println(Evaluator.countMoneyPlus(fft.nutritionManager.getCookedMeals(), fft.productManager));
+            //System.out.println(Evaluator.countMoneyPlus(fft.nutritionManager.getCookedMeals(), fft.productManager));
         });
 
         countPanel.add(button);
@@ -323,21 +314,21 @@ public class GUI {
         JLabel selectedMeals = new JLabel();
         for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
             if (!meal.getName().equals("Nothing")){
-                String t = selectedMeals.getText().equals("") ? "" : selectedMeals.getText() + "; ";
+                String t = selectedMeals.getText().isEmpty() ? "" : selectedMeals.getText() + "; ";
                 selectedMeals.setText(t + meal.getName() + " : " + fft.nutritionManager.getMealCountMap().get(meal));
             }
         }
 
         JLabel leftovers = new JLabel();
         for (Meal meal:fft.nutritionManager.getLeftOvers().keySet()) {
-            String t = leftovers.getText().equals("") ? "" : leftovers.getText() + "; ";
+            String t = leftovers.getText().isEmpty() ? "" : leftovers.getText() + "; ";
             leftovers.setText(t + meal.getName() + " : " + fft.nutritionManager.getLeftOvers().get(meal));
         }
 
-        JLabel products = new JLabel();//???
+        JLabel products = new JLabel();
         Map<String, Number> neededProducts = Evaluator.getNeededProducts(fft.nutritionManager.getCookedMeals(), fft.productManager.getAvailableProducts());
         for (String product:neededProducts.keySet()) {
-                String t = products.getText().equals("") ? "" : products.getText() + "; ";
+                String t = products.getText().isEmpty() ? "" : products.getText() + "; ";
                 products.setText(t + product + " : " + neededProducts.get(product));
         }
         labels[0] = selectedMeals;
