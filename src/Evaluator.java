@@ -8,7 +8,7 @@ public class Evaluator {
         }
         return sum;
     }
-    private static ArrayList<Product> findProductsForIngredient(String ingredient, ArrayList<Product> products){
+    public static ArrayList<Product> findProductsForIngredient(String ingredient, ArrayList<Product> products){
         ArrayList<Product> productsForIngredient = new ArrayList<>();
         for (Product p: products){
             if (p.getIngredient().getName().equals(ingredient)){

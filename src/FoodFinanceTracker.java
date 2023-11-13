@@ -6,7 +6,6 @@ public class FoodFinanceTracker{
     public ProductManager productManager;
     public MealManager mealManager;
     public NutritionManager nutritionManager;
-    GUI gui;
     public FoodFinanceTracker(){
         this.ingredientManager = new IngredientManager();
         this.mealManager = new MealManager();

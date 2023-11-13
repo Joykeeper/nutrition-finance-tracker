@@ -18,10 +18,16 @@ public class ProductManager implements Serializable {
     }
     public ProductManager(){}
     public void addProduct(Product product){
+        removeProduct(product);
         this.availableProducts.add(product);
     }
     public void removeProduct(Product product){
-        this.availableProducts.remove(product);
+        for (int i = 0; i < availableProducts.size(); i++) {
+            if (availableProducts.get(i).getName().equals(product.getName())){
+                availableProducts.remove(i);
+                return;
+            }
+        }
     }
     public ArrayList<Product> getAvailableProducts(){
         return this.availableProducts;
