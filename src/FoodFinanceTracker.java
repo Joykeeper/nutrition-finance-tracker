@@ -33,9 +33,9 @@ public class FoodFinanceTracker{
         //System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
         //System.out.println(Evaluator.countTime(nutritionManager.getCookedMeals()));
     }
-    public void save(){
+    public void save(File file){
         try {
-            FileOutputStream fileStream = new FileOutputStream(new File("Checkbox.ser"));
+            FileOutputStream fileStream = new FileOutputStream(file);
             ObjectOutputStream os = new ObjectOutputStream(fileStream);
             os.writeObject(this.mealManager);
             os.writeObject(this.productManager);
@@ -47,26 +47,16 @@ public class FoodFinanceTracker{
             ex.printStackTrace();
         }
     }
-    public void load(){
+    public void load(File file){
         try {
-            FileInputStream fileIn = new FileInputStream(new File("Checkbox.ser"));
+            FileInputStream fileIn = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fileIn);
-
-//            System.out.println("Preload");
-//            for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
-//                System.out.println(meal.getName() + nutritionManager.getMealCountMap().get(meal));
-//            }
 
             this.mealManager = (MealManager) ois.readObject();
             this.productManager = (ProductManager) ois.readObject();
             this.ingredientManager = (IngredientManager) ois.readObject();
             this.nutritionManager = (NutritionManager) ois.readObject();
             ois.close();
-
-//            System.out.println("Postload");
-//            for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
-//                System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
-//            }
 
         } catch(Exception ex) {ex.printStackTrace();}
     }

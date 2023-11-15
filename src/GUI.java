@@ -20,13 +20,17 @@ public class GUI {
 
         JMenuItem saveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveMenuItem.addActionListener(e -> {
-            this.fft.save();
+            JFileChooser fileSave = new JFileChooser();
+            fileSave.showSaveDialog(mainFrame);
+            this.fft.save(fileSave.getSelectedFile());
             System.out.println("Saved");
         });
         menu.add(saveMenuItem);
         JMenuItem loadMenuItem = new JMenuItem("Load", KeyEvent.VK_L);
         loadMenuItem.addActionListener(e -> {
-            this.fft.load();
+            JFileChooser fileLoad = new JFileChooser();
+            fileLoad.showSaveDialog(mainFrame);
+            this.fft.load(fileLoad.getSelectedFile());
             this.updateGUI();
             System.out.println("Loaded");
         });
