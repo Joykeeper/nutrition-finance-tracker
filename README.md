@@ -1,5 +1,7 @@
 # nutrition-finance-tracker
 
+- To run the program: run the "Main.java" file
+
 - Descripton:
 This program helps you to plan your meals, to sum up the time for the cooking of the food and to count the most optimal price for the required ingredients.
 
