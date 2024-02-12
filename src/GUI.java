@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GUI {
@@ -8,10 +10,12 @@ public class GUI {
     JTabbedPane mainCardLayout;
     FoodFinanceTracker fft;
     String[] daysOfTheWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    public GUI(FoodFinanceTracker fft){
+
+    public GUI(FoodFinanceTracker fft) {
         this.fft = fft;
     }
-    public void setUpGUI(){
+
+    public void setUpGUI() {
         mainFrame = new JFrame();
 
         JMenuBar menuBar = new JMenuBar();
@@ -40,17 +44,19 @@ public class GUI {
         mainFrame.getContentPane().add(BorderLayout.CENTER, createMainCardLayout());
 
 
-        mainFrame.setSize(1000,1000);
+        mainFrame.setSize(1000, 1000);
         mainFrame.setVisible(true);
     }
-    private void updateGUI(){
+
+    private void updateGUI() {
         int chosenTab = mainCardLayout.getSelectedIndex();
         mainFrame.getContentPane().remove(mainFrame.getContentPane().getComponents()[1]);
         mainFrame.getContentPane().add(BorderLayout.CENTER, createMainCardLayout());
         mainFrame.revalidate();
         mainCardLayout.setSelectedIndex(chosenTab);
     }
-    private JTabbedPane createMainCardLayout(){
+
+    private JTabbedPane createMainCardLayout() {
         mainCardLayout = new JTabbedPane();
         mainCardLayout.addTab("Main", null, createMainPanel());
         mainCardLayout.addTab("Add meal", null, createAddMealPanel());
@@ -61,12 +67,12 @@ public class GUI {
         return mainCardLayout;
     }
 
-    private JPanel createAllMealPanel(){
+    private JPanel createAllMealPanel() {
         JPanel allMealPanel = new JPanel();
         allMealPanel.setLayout(new FlowLayout());
 
-        for (Meal meal: fft.mealManager.getAvailableMeals().values()){
-            if (meal.getName() != "Nothing"){
+        for (Meal meal : fft.mealManager.getAvailableMeals().values()) {
+            if (meal.getName() != "Nothing") {
                 allMealPanel.add(createMealPanel(meal));
             }
         }
@@ -74,7 +80,8 @@ public class GUI {
 
         return allMealPanel;
     }
-    private  JPanel createMealPanel(Meal meal){
+
+    private JPanel createMealPanel(Meal meal) {
         JPanel mealPanel = new JPanel();
         mealPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         mealPanel.setLayout(new BoxLayout(mealPanel, BoxLayout.Y_AXIS));
@@ -104,13 +111,13 @@ public class GUI {
         JLabel ingredientLabel = new JLabel("ingredients:");
         JPanel ingredientsInfo = new JPanel();
         ingredientsInfo.setLayout(new BoxLayout(ingredientsInfo, BoxLayout.Y_AXIS));
-        for (Ingredient ingredient: meal.getIngredients()){
-            JLabel ingredientInfo = new JLabel(ingredient.getName() + " : " + ingredient.getAmount());
+        for (Ingredient ingredient : meal.getIngredients().keySet()) {
+            JLabel ingredientInfo = new JLabel(ingredient.getName() + " : " + meal.getIngredients().get(ingredient));
             ingredientInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
             ingredientsInfo.add(ingredientInfo);
         }
         JScrollPane scroll = new JScrollPane(ingredientsInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setPreferredSize(new Dimension (70, 100));
+        scroll.setPreferredSize(new Dimension(70, 100));
 
         subPanel1.add(deleteMealButton);
         subPanel1.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -128,24 +135,26 @@ public class GUI {
 
         return mealPanel;
     }
-    private void editMeal(Meal meal){
+
+    private void editMeal(Meal meal) {
         mainCardLayout.setComponentAt(1, createAddMealPanel(meal));
         mainCardLayout.setSelectedIndex(1);
 
     }
 
-    private JPanel createAllIngredientPanel(){
+    private JPanel createAllIngredientPanel() {
         JPanel allIngPanel = new JPanel();
         allIngPanel.setLayout(new FlowLayout());
 
-        for (String ing: fft.ingredientManager.getAvailableIngredients()){
+        for (String ing : fft.ingredientManager.getAvailableIngredients()) {
             allIngPanel.add(createIngredientPanel(ing));
         }
 
 
         return allIngPanel;
     }
-    private  JPanel createIngredientPanel(String ingredient){
+
+    private JPanel createIngredientPanel(String ingredient) {
         JPanel ingredientPanel = new JPanel();
         ingredientPanel.setBorder(BorderFactory.createLineBorder(Color.black));
         ingredientPanel.setLayout(new BoxLayout(ingredientPanel, BoxLayout.Y_AXIS));
@@ -155,7 +164,7 @@ public class GUI {
 
         JButton deleteMealButton = new JButton("Delete");
         deleteMealButton.addActionListener(e -> {
-            for (Product product: Evaluator.findProductsForIngredient(ingredient, fft.productManager.getAvailableProducts())) {
+            for (Product product : Evaluator.findProductsForIngredient(ingredient, fft.productManager.getAvailableProducts())) {
                 fft.productManager.removeProduct(product);
             }
             System.out.println(fft.productManager.getAvailableProducts().size());
@@ -173,7 +182,7 @@ public class GUI {
         JLabel productLabel = new JLabel("Available products:");
         JPanel productsInfo = new JPanel();
         productsInfo.setLayout(new BoxLayout(productsInfo, BoxLayout.Y_AXIS));
-        for (Product product: Evaluator.findProductsForIngredient(ingredient, fft.productManager.getAvailableProducts())){
+        for (Product product : Evaluator.findProductsForIngredient(ingredient, fft.productManager.getAvailableProducts())) {
 
             JPanel productPanel = new JPanel();
             productPanel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -185,7 +194,7 @@ public class GUI {
 
             JLabel productName = new JLabel(product.getName());
             productName.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-            JLabel ingredientAmount = new JLabel("Amount : " + product.getIngredient().getAmount());
+            JLabel ingredientAmount = new JLabel("Amount : " + product.getAmountOfIngredient());
             JLabel productCost = new JLabel("Cost : " + product.getCost());
             productName.setAlignmentX(Component.CENTER_ALIGNMENT);
             ingredientAmount.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -220,7 +229,7 @@ public class GUI {
             productsInfo.add(productPanel);
         }
         JScrollPane scroll = new JScrollPane(productsInfo, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setPreferredSize(new Dimension (70, 100));
+        scroll.setPreferredSize(new Dimension(70, 100));
 
         subPanel1.add(deleteMealButton);
         subPanel1.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -235,12 +244,13 @@ public class GUI {
 
         return ingredientPanel;
     }
-    private void editProduct(Product product){
+
+    private void editProduct(Product product) {
         mainCardLayout.setComponentAt(2, createAddProductPanel(product));
         mainCardLayout.setSelectedIndex(2);
     }
 
-    private JPanel createMainPanel(){
+    private JPanel createMainPanel() {
         JPanel mainPanel = new JPanel();
 
         mainPanel.setLayout(new GridBagLayout());
@@ -250,23 +260,24 @@ public class GUI {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        mainPanel.add(createFoodTablePanel(),gbc);
+        mainPanel.add(createFoodTablePanel(), gbc);
 
         gbc.fill = GridBagConstraints.CENTER;
         gbc.gridx = 1;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        mainPanel.add(createCountPanel(),gbc);
+        mainPanel.add(createCountPanel(), gbc);
 
         gbc.fill = GridBagConstraints.EAST;
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
-        mainPanel.add(createAdditionalInfoPanel(),gbc);
+        mainPanel.add(createAdditionalInfoPanel(), gbc);
 
         return mainPanel;
     }
-    public JPanel createAddProductPanel(){
+
+    public JPanel createAddProductPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -286,8 +297,8 @@ public class GUI {
 
         addProduct.addActionListener(e -> {
             fft.productManager.addProduct(new Product(name.getText(),
-                    new Ingredient((String) containingIngredient.getSelectedItem(),
-                            Float.parseFloat(amountOfIngredient.getText())),
+                    new Ingredient((String) containingIngredient.getSelectedItem()),
+                    Float.parseFloat(amountOfIngredient.getText()),
                     Float.parseFloat(cost.getText())));
             this.updateGUI();
         });
@@ -306,7 +317,8 @@ public class GUI {
 
         return panel;
     }
-    public JPanel createAddProductPanel(Product product){
+
+    public JPanel createAddProductPanel(Product product) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -320,15 +332,15 @@ public class GUI {
         containingIngredient.setSelectedItem(product.getIngredient().getName());
 
         JLabel amountLabel = new JLabel("Amount of ingredient: ");
-        JTextField amountOfIngredient = new JTextField(Float.toString(product.getIngredient().getAmount()));
+        JTextField amountOfIngredient = new JTextField(Float.toString(product.getAmountOfIngredient()));
 
         JLabel costLabel = new JLabel("Cost of product: ");
         JTextField cost = new JTextField(Float.toString(product.getCost()));
 
         addProduct.addActionListener(e -> {
             fft.productManager.addProduct(new Product(name.getText(),
-                    new Ingredient((String) containingIngredient.getSelectedItem(),
-                            Float.parseFloat(amountOfIngredient.getText())),
+                    new Ingredient((String) containingIngredient.getSelectedItem()),
+                    Float.parseFloat(amountOfIngredient.getText()),
                     Float.parseFloat(cost.getText())));
             this.updateGUI();
         });
@@ -347,7 +359,8 @@ public class GUI {
 
         return panel;
     }
-    public JPanel createAddIngredientPanel(){
+
+    public JPanel createAddIngredientPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -368,13 +381,13 @@ public class GUI {
         addIngredient.addActionListener(e -> {
             fft.ingredientManager.addIngredient(ingredientName.getText());
             fft.productManager.addProduct(new Product(productName.getText(),
-                    new Ingredient(ingredientName.getText(),Float.parseFloat(amountOfIngredient.getText())),
+                    new Ingredient(ingredientName.getText()), Float.parseFloat(amountOfIngredient.getText()),
                     Float.parseFloat(cost.getText())));
 
-            for (Product p:fft.productManager.getAvailableProducts()) {
+            for (Product p : fft.productManager.getAvailableProducts()) {
                 System.out.println(p.getName());
             }
-            for (String ing:fft.ingredientManager.getAvailableIngredients()) {
+            for (String ing : fft.ingredientManager.getAvailableIngredients()) {
                 System.out.println(ing);
             }
             this.updateGUI();
@@ -394,7 +407,8 @@ public class GUI {
 
         return panel;
     }
-    public JPanel createAddMealPanel(){
+
+    public JPanel createAddMealPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -419,19 +433,19 @@ public class GUI {
         JButton addMeal = new JButton("Add meal");
         addMeal.addActionListener(e -> {
             Component[] components = ingredientsPanel.getComponents();
-            Ingredient[] ingredients = new Ingredient[components.length/4];
-            for (Component comp:components) {
-                System.out.println(comp);
-            }
-            for (int i = 0; i < components.length/4; i+=1) {
-                ingredients[i] = new Ingredient( (String) ((JComboBox) components[i*4+1]).getSelectedItem(),
-                        Float.parseFloat(((JTextField) components[i*4+3]).getText()));
+            Map<Ingredient, Float> ingredientAmountMap = new HashMap<>();
+            for (int i = 0; i < components.length / 5; i += 1) {
+                String selectedIngredient = (String) ((JComboBox) components[i * 5 + 1]).getSelectedItem();
+                float amountOfIngredient = Float.parseFloat(((JTextField) components[i * 5 + 3]).getText());
+                ingredientAmountMap.put(new Ingredient(selectedIngredient), amountOfIngredient);
             }
 
-            fft.mealManager.addMeal(new Meal(mealName.getText(),
-                    Integer.parseInt(requiredTime.getText()),
-                    ingredients,
-                    Integer.parseInt(portions.getText())));
+            fft.mealManager.addMeal(
+                    new Meal(
+                            mealName.getText(),
+                            Integer.parseInt(requiredTime.getText()),
+                            ingredientAmountMap,
+                            Integer.parseInt(portions.getText())));
             this.updateGUI();
             System.out.println(fft.mealManager.getAvailableMeals());
         });
@@ -439,20 +453,40 @@ public class GUI {
 
         ingredientsPanel.setLayout(new BoxLayout(ingredientsPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(ingredientsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setPreferredSize(new Dimension (100, 100));
+        scroll.setPreferredSize(new Dimension(100, 100));
+
         JButton addIngredient = new JButton("Add ingredient");
         addIngredient.addActionListener(e -> {
+            JPanel ingredientBlock = new JPanel();
+            if (ingredientsPanel.getComponents().length != 0) {
+                ingredientBlock.setName(":(");
+            } else {
+                ingredientBlock.setName("0");
+            }
+            ingredientBlock.setLayout(new BoxLayout(ingredientBlock, BoxLayout.Y_AXIS));
             JLabel ingredientNameLabel = new JLabel("Ingredient:");
             JComboBox ingredientName = new JComboBox(fft.ingredientManager.getAvailableIngredients().toArray());
 
 
             JLabel amountLabel = new JLabel("Amount");
             JTextField amount = new JTextField();
+            JButton removeIngredient = new JButton("Remove");
+
+            int indexOfComponent = ingredientsPanel.getComponents().length;
+            //removeIngredient.setName("1");
+            //System.out.println(removeIngredient.getName());
+            removeIngredient.addActionListener(e1 -> {
+                for (int i = 0; i < 5; i++) {
+                    ingredientsPanel.remove(indexOfComponent);
+                    ingredientsPanel.revalidate();
+                }
+            });
 
             ingredientsPanel.add(ingredientNameLabel);
             ingredientsPanel.add(ingredientName);
             ingredientsPanel.add(amountLabel);
             ingredientsPanel.add(amount);
+            ingredientsPanel.add(removeIngredient);
 
             ingredientsPanel.revalidate();
             subPanel2.revalidate();
@@ -489,7 +523,8 @@ public class GUI {
 
         return panel;
     }
-    public JPanel createAddMealPanel(Meal meal){
+
+    public JPanel createAddMealPanel(Meal meal) {
         JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -514,18 +549,16 @@ public class GUI {
         JButton addMeal = new JButton("Add meal");
         addMeal.addActionListener(e -> {
             Component[] components = ingredientsPanel.getComponents();
-            Ingredient[] ingredients = new Ingredient[components.length/4];
-            for (Component comp:components) {
-                System.out.println(comp);
-            }
-            for (int i = 0; i < components.length/4; i+=1) {
-                ingredients[i] = new Ingredient( (String) ((JComboBox) components[i*4+1]).getSelectedItem(),
-                        Float.parseFloat(((JTextField) components[i*4+3]).getText()));
+            Ingredient[] ingredients = new Ingredient[components.length / 5];
+            Map<Ingredient, Float> ingredientAmountMap = new HashMap<>();
+            for (int i = 0; i < components.length / 5; i += 1) {
+                ingredientAmountMap.put(new Ingredient((String) ((JComboBox) components[i * 5 + 1]).getSelectedItem()),
+                        Float.parseFloat(((JTextField) components[i * 5 + 3]).getText()));
             }
 
             fft.mealManager.addMeal(new Meal(mealName.getText(),
                     Integer.parseInt(requiredTime.getText()),
-                    ingredients,
+                    ingredientAmountMap,
                     Integer.parseInt(portions.getText())));
             this.updateGUI();
             System.out.println(fft.mealManager.getAvailableMeals());
@@ -534,8 +567,9 @@ public class GUI {
 
         ingredientsPanel.setLayout(new BoxLayout(ingredientsPanel, BoxLayout.Y_AXIS));
         JScrollPane scroll = new JScrollPane(ingredientsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scroll.setPreferredSize(new Dimension (100, 100));
+        scroll.setPreferredSize(new Dimension(100, 100));
         JButton addIngredient = new JButton("Add ingredient");
+
         addIngredient.addActionListener(e -> {
             JLabel ingredientNameLabel = new JLabel("Ingredient:");
             JComboBox ingredientName = new JComboBox(fft.ingredientManager.getAvailableIngredients().toArray());
@@ -543,29 +577,49 @@ public class GUI {
 
             JLabel amountLabel = new JLabel("Amount");
             JTextField amount = new JTextField();
+            JButton removeIngredient = new JButton("Remove");
+            int indexOfComponent = ingredientsPanel.getComponents().length;
+            removeIngredient.addActionListener(e1 -> {
+                for (int i = 0; i < 5; i++) {
+                    ingredientsPanel.remove(indexOfComponent);
+                    ingredientsPanel.revalidate();
+                }
+            });
 
             ingredientsPanel.add(ingredientNameLabel);
             ingredientsPanel.add(ingredientName);
             ingredientsPanel.add(amountLabel);
             ingredientsPanel.add(amount);
+            ingredientsPanel.add(removeIngredient);
 
             ingredientsPanel.revalidate();
             subPanel2.revalidate();
         });
 
-        for (Ingredient ingredient: meal.getIngredients()) {
+        int indexCounter = 0;
+        for (Ingredient ingredient : meal.getIngredients().keySet()) {
             JLabel ingredientNameLabel = new JLabel("Ingredient:");
             JComboBox ingredientName = new JComboBox(fft.ingredientManager.getAvailableIngredients().toArray());
             ingredientName.setSelectedItem(ingredient.getName());
 
 
             JLabel amountLabel = new JLabel("Amount");
-            JTextField amount = new JTextField(Float.toString(ingredient.getAmount()));
+            JTextField amount = new JTextField(Float.toString(meal.getIngredients().get(ingredient)));
+            JButton removeIngredient = new JButton("Remove");
+
+            int indexOfComponent = ingredientsPanel.getComponents().length;
+            removeIngredient.addActionListener(e1 -> {
+                for (int i = 0; i < 5; i++) {
+                    ingredientsPanel.remove(indexOfComponent);
+                    ingredientsPanel.revalidate();
+                }
+            });
 
             ingredientsPanel.add(ingredientNameLabel);
             ingredientsPanel.add(ingredientName);
             ingredientsPanel.add(amountLabel);
             ingredientsPanel.add(amount);
+            ingredientsPanel.add(removeIngredient);
 
             ingredientsPanel.revalidate();
             subPanel2.revalidate();
@@ -601,16 +655,18 @@ public class GUI {
 
         return panel;
     }
-    private JPanel createFoodTablePanel(){
+
+    private JPanel createFoodTablePanel() {
         JPanel foodTablePanel = new JPanel();
         foodTablePanel.setLayout(new FlowLayout());
 
-        for (int i = 0; i < 7; i++){
+        for (int i = 0; i < 7; i++) {
             foodTablePanel.add(createDay(daysOfTheWeek[i]));
         }
         return foodTablePanel;
     }
-    private JPanel createCountPanel(){
+
+    private JPanel createCountPanel() {
         JPanel countPanel = new JPanel();
         countPanel.setLayout(new BoxLayout(countPanel, BoxLayout.Y_AXIS));
 
@@ -629,7 +685,8 @@ public class GUI {
         countPanel.add(labelForTime);
         return countPanel;
     }
-    private JPanel createAdditionalInfoPanel(){
+
+    private JPanel createAdditionalInfoPanel() {
         JPanel additionalInfoPanel = new JPanel();
         additionalInfoPanel.setLayout(new BoxLayout(additionalInfoPanel, BoxLayout.Y_AXIS));
 
@@ -648,28 +705,29 @@ public class GUI {
 
         return additionalInfoPanel;
     }
-    private JLabel[] getAdditionalInfoLabels(){
+
+    private JLabel[] getAdditionalInfoLabels() {
         JLabel[] labels = new JLabel[3];
 
         JLabel selectedMeals = new JLabel();
-        for (Meal meal:fft.nutritionManager.getMealCountMap().keySet()) {
-            if (!meal.getName().equals("Nothing")){
+        for (Meal meal : fft.nutritionManager.getMealCountMap().keySet()) {
+            if (!meal.getName().equals("Nothing")) {
                 String t = selectedMeals.getText().isEmpty() ? "" : selectedMeals.getText() + "; ";
                 selectedMeals.setText(t + meal.getName() + " : " + fft.nutritionManager.getMealCountMap().get(meal));
             }
         }
 
         JLabel leftovers = new JLabel();
-        for (Meal meal:fft.nutritionManager.getLeftOvers().keySet()) {
+        for (Meal meal : fft.nutritionManager.getLeftOvers().keySet()) {
             String t = leftovers.getText().isEmpty() ? "" : leftovers.getText() + "; ";
             leftovers.setText(t + meal.getName() + " : " + fft.nutritionManager.getLeftOvers().get(meal));
         }
 
         JLabel products = new JLabel();
         Map<String, Number> neededProducts = Evaluator.getNeededProducts(fft.nutritionManager.getCookedMeals(), fft.productManager.getAvailableProducts());
-        for (String product:neededProducts.keySet()) {
-                String t = products.getText().isEmpty() ? "" : products.getText() + "; ";
-                products.setText(t + product + " : " + neededProducts.get(product));
+        for (String product : neededProducts.keySet()) {
+            String t = products.getText().isEmpty() ? "" : products.getText() + "; ";
+            products.setText(t + product + " : " + neededProducts.get(product));
         }
         labels[0] = selectedMeals;
         labels[1] = leftovers;
@@ -677,14 +735,15 @@ public class GUI {
 
         return labels;
     }
-    private JComboBox createChoiceBar(String dayOfTheWeek, int numberOfFood){
+
+    private JComboBox createChoiceBar(String dayOfTheWeek, int numberOfFood) {
         String[] namesOfMeals = new String[fft.mealManager.getAvailableMeals().size()];
 
         int i = 0;
-        for (String name: fft.mealManager.getAvailableMeals().keySet()) {
+        for (String name : fft.mealManager.getAvailableMeals().keySet()) {
             namesOfMeals[i++] = name;
         }
-        ComboBoxModel model =  new DefaultComboBoxModel(namesOfMeals);
+        ComboBoxModel model = new DefaultComboBoxModel(namesOfMeals);
 
         JComboBox comboBox = new JComboBox();
 
@@ -694,23 +753,27 @@ public class GUI {
         comboBox.setSelectedItem(fft.nutritionManager.getSelectedMealsMap().get(dayOfTheWeek)[numberOfFood].getName());
         // add ItemListener
         comboBox.addActionListener(e -> {
-            System.out.println(comboBox.getSelectedItem());
             comboBox.setModel(model);
-            if (comboBox.getSelectedItem() == "Nothing"){
-                fft.nutritionManager.selectNoMeal(dayOfTheWeek, numberOfFood);
-            } else{
+            for (String day : fft.nutritionManager.getSelectedMealsMap().keySet()) {
+                System.out.println(day + " : " + Arrays.toString(fft.nutritionManager.getSelectedMealsMap().get(day)));
+            }
+
+            if (comboBox.getSelectedItem() == "Nothing") {
+                //fft.nutritionManager.deselectMeal(dayOfTheWeek, numberOfFood);
+            } else {
                 fft.nutritionManager.selectMeal(fft.mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
             }
             this.updateGUI();
         });
         return comboBox;
     }
-    private JPanel createDay(String dayOfTheWeek){
+
+    private JPanel createDay(String dayOfTheWeek) {
         JPanel panel = new JPanel();
         JLabel dayName = new JLabel(dayOfTheWeek);
         panel.add(dayName);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             panel.add(createChoiceBar(dayOfTheWeek, i));
         }
         return panel;

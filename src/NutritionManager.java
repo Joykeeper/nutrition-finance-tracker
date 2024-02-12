@@ -4,29 +4,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NutritionManager implements Serializable {
-    Meal nothing = new Meal("Nothing", 0, new Ingredient[]{},0);
-    Map<String, Meal[]> selectedMealsMap = new HashMap<>(){
+    Meal nothing = new Meal("Nothing", 0, new HashMap<>(),0);
+    Map<String, ComplexMeal[]> selectedMealsMap = new HashMap<>(){
         {
-            put("Monday", new Meal[]{nothing, nothing, nothing});
-            put("Tuesday", new Meal[]{nothing, nothing, nothing});
-            put("Wednesday", new Meal[]{nothing, nothing, nothing});
-            put("Thursday", new Meal[]{nothing, nothing, nothing});
-            put("Friday", new Meal[]{nothing, nothing, nothing});
-            put("Saturday", new Meal[]{nothing, nothing, nothing});
-            put("Sunday", new Meal[]{nothing, nothing, nothing});
+            put("Monday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Tuesday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Wednesday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Thursday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Friday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Saturday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
+            put("Sunday", new ComplexMeal[]{new ComplexMeal(), new ComplexMeal(), new ComplexMeal()});
         }
     };
-    public void selectNoMeal(String day, int numberOfFood){
-        selectedMealsMap.get(day)[numberOfFood] = nothing;
+    public void deselectMeal(Meal meal, String day, int numberOfFood){
+        selectedMealsMap.get(day)[numberOfFood].removeMeal(meal);
     }
     public void selectMeal(Meal meal, String day, int numberOfFood){
-        selectedMealsMap.get(day)[numberOfFood] = meal;
+        selectedMealsMap.get(day)[numberOfFood].addMeal(meal);
+    }
+
+    private static Meal[] splitComplexIntoSimpleMeals(ComplexMeal[] complexMeals){
+        Meal[] simpleMeals = new Meal[complexMeals.length];
+        int filled = 0;
+        for (ComplexMeal cm: complexMeals) {
+            for (Meal m: cm.getMeals().keySet()) {
+                for (int i = 0; i < cm.getMeals().get(m); i++) {
+                    simpleMeals[filled++] = m;
+                }
+            }
+        }
+        return simpleMeals;
     }
 
     public Map<Meal, Integer> getMealCountMap(){
         Map<Meal, Integer> mealCountMap = new HashMap<>();
-        for (Meal[] mealArr: this.selectedMealsMap.values()){
-            for (Meal meal: mealArr) {
+        for (ComplexMeal[] complexMealArr: this.selectedMealsMap.values()){
+            for (Meal meal: splitComplexIntoSimpleMeals(complexMealArr)) {
                 if (mealCountMap.containsKey(meal)){
                     mealCountMap.put(meal, mealCountMap.get(meal)+1);
                 } else {
@@ -37,7 +50,12 @@ public class NutritionManager implements Serializable {
         return mealCountMap;
     }
     public Map<String, Meal[]> getSelectedMealsMap(){
-        return this.selectedMealsMap;
+        Map<String, Meal[]> simpleSelectedMeals = new HashMap<>();
+        for (String day:this.selectedMealsMap.keySet()) {
+            simpleSelectedMeals.put(day,
+                    splitComplexIntoSimpleMeals(this.selectedMealsMap.get(day)));
+        }
+        return simpleSelectedMeals;
     }
     public Map<Meal, Integer> getLeftOvers(){
         Map<Meal, Integer> leftoversMap = new HashMap<>();

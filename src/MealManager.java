@@ -5,7 +5,7 @@ import java.util.Map;
 public class MealManager implements Serializable {
     private Map<String, Meal> availableMeals = new HashMap<>(){
         {
-            put("Nothing", new Meal("Nothing", 0, new Ingredient[]{},0));
+            put("Nothing", new Meal("Nothing", 0, new HashMap<>(),0));
         }
     };
     public MealManager(Map<String, Meal> availableMeals){

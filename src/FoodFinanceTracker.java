@@ -1,5 +1,6 @@
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FoodFinanceTracker{
     public IngredientManager ingredientManager;
@@ -15,15 +16,19 @@ public class FoodFinanceTracker{
     public void run() {
 
         mealManager.addMeal(new Meal("Scrambled eggs", 25,
-                new Ingredient[]{
-                        new Ingredient("Egg", 2f),
-                        new Ingredient("Milk", 1.25f),
-                        new Ingredient("Salt", 0.25f),
+                new HashMap<>() {
+                {
+                    put(new Ingredient("Egg"), 2f);
+                    put(new Ingredient("Milk"), 1.25f);
+                    put(new Ingredient("Salt"),0.25f);
+                }
                 }, 3));
         mealManager.addMeal(new Meal("Sandwich", 5,
-                new Ingredient[]{
-                        new Ingredient("Bread", 3f),
-                        new Ingredient("Cheese", 1f),
+                new HashMap<>() {
+                    {
+                        put(new Ingredient("Bread"), 4f);
+                        put(new Ingredient("Cheese"), 1.25f);
+                    }
                 }, 5));
 
 //        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
