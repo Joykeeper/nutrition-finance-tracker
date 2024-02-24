@@ -1,3 +1,7 @@
+package model;
+
+import model.Meal;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

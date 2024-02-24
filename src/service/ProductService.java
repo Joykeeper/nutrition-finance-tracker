@@ -1,7 +1,12 @@
+package service;
+
+import model.Ingredient;
+import model.Product;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ProductManager implements Serializable {
+public class ProductService implements Serializable {
     private ArrayList<Product> availableProducts = new ArrayList<>(){
         {
             add(new Product("10 Eggs", new Ingredient("Egg"), 10f, 7f));
@@ -13,10 +18,10 @@ public class ProductManager implements Serializable {
             add(new Product("Salt 1", new Ingredient("Salt"), 1f, 1f));
         }
     };
-    public ProductManager(ArrayList<Product> availableProducts){
+    public ProductService(ArrayList<Product> availableProducts){
         this.availableProducts = availableProducts;
     }
-    public ProductManager(){}
+    public ProductService(){}
     public void addProduct(Product product){
         removeProduct(product);
         this.availableProducts.add(product);

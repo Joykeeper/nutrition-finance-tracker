@@ -1,17 +1,25 @@
+package model;
+
+import model.Ingredient;
+import model.Meal;
+import service.IngredientService;
+import service.MealService;
+import service.NutritionService;
+import service.ProductService;
+
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 
 public class FoodFinanceTracker{
-    public IngredientManager ingredientManager;
-    public ProductManager productManager;
-    public MealManager mealManager;
-    public NutritionManager nutritionManager;
+    public IngredientService ingredientManager;
+    public ProductService productManager;
+    public MealService mealManager;
+    public NutritionService nutritionManager;
     public FoodFinanceTracker(){
-        this.ingredientManager = new IngredientManager();
-        this.mealManager = new MealManager();
-        this.productManager = new ProductManager();
-        this.nutritionManager = new NutritionManager();
+        this.ingredientManager = new IngredientService();
+        this.mealManager = new MealService();
+        this.productManager = new ProductService();
+        this.nutritionManager = new NutritionService();
     }
     public void run() {
 
@@ -31,12 +39,12 @@ public class FoodFinanceTracker{
                     }
                 }, 5));
 
-//        for (Meal meal:nutritionManager.getMealCountMap().keySet()) {
+//        for (model.Meal meal:nutritionManager.getMealCountMap().keySet()) {
 //                System.out.println(meal.getName() + " " + nutritionManager.getMealCountMap().get(meal));
 //        }
 
-        //System.out.println(Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
-        //System.out.println(Evaluator.countTime(nutritionManager.getCookedMeals()));
+        //System.out.println(model.Evaluator.countMoney(nutritionManager.getCookedMeals(), productManager));
+        //System.out.println(model.Evaluator.countTime(nutritionManager.getCookedMeals()));
     }
     public void save(File file){
         try {
@@ -57,10 +65,10 @@ public class FoodFinanceTracker{
             FileInputStream fileIn = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fileIn);
 
-            this.mealManager = (MealManager) ois.readObject();
-            this.productManager = (ProductManager) ois.readObject();
-            this.ingredientManager = (IngredientManager) ois.readObject();
-            this.nutritionManager = (NutritionManager) ois.readObject();
+            this.mealManager = (MealService) ois.readObject();
+            this.productManager = (ProductService) ois.readObject();
+            this.ingredientManager = (IngredientService) ois.readObject();
+            this.nutritionManager = (NutritionService) ois.readObject();
             ois.close();
 
         } catch(Exception ex) {ex.printStackTrace();}

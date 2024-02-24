@@ -1,3 +1,7 @@
+package view;
+
+import model.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -48,7 +52,7 @@ public class GUI {
         mainFrame.setVisible(true);
     }
 
-    private void updateGUI() {
+    public void updateGUI() {
         int chosenTab = mainCardLayout.getSelectedIndex();
         mainFrame.getContentPane().remove(mainFrame.getContentPane().getComponents()[1]);
         mainFrame.getContentPane().add(BorderLayout.CENTER, createMainCardLayout());
@@ -58,12 +62,13 @@ public class GUI {
 
     private JTabbedPane createMainCardLayout() {
         mainCardLayout = new JTabbedPane();
-        mainCardLayout.addTab("Main", null, createMainPanel());
+        //mainCardLayout.addTab("Main", null, createMainPanel());
         mainCardLayout.addTab("Add meal", null, createAddMealPanel());
         mainCardLayout.addTab("Add product", null, createAddProductPanel());
         mainCardLayout.addTab("Add ingredient", null, createAddIngredientPanel());
         mainCardLayout.addTab("All meals", null, createAllMealPanel());
         mainCardLayout.addTab("All ingredients", null, createAllIngredientPanel());
+        mainCardLayout.addTab("Test calendar", null, createCalendar());
         return mainCardLayout;
     }
 
@@ -167,7 +172,6 @@ public class GUI {
             for (Product product : Evaluator.findProductsForIngredient(ingredient, fft.productManager.getAvailableProducts())) {
                 fft.productManager.removeProduct(product);
             }
-            System.out.println(fft.productManager.getAvailableProducts().size());
 
             fft.ingredientManager.removeIngredient(ingredient);
             updateGUI();
@@ -447,7 +451,6 @@ public class GUI {
                             ingredientAmountMap,
                             Integer.parseInt(portions.getText())));
             this.updateGUI();
-            System.out.println(fft.mealManager.getAvailableMeals());
         });
 
 
@@ -473,8 +476,7 @@ public class GUI {
             JButton removeIngredient = new JButton("Remove");
 
             int indexOfComponent = ingredientsPanel.getComponents().length;
-            //removeIngredient.setName("1");
-            //System.out.println(removeIngredient.getName());
+
             removeIngredient.addActionListener(e1 -> {
                 for (int i = 0; i < 5; i++) {
                     ingredientsPanel.remove(indexOfComponent);
@@ -561,7 +563,6 @@ public class GUI {
                     ingredientAmountMap,
                     Integer.parseInt(portions.getText())));
             this.updateGUI();
-            System.out.println(fft.mealManager.getAvailableMeals());
         });
 
 
@@ -677,7 +678,7 @@ public class GUI {
             labelForMoney.setText("Money: " + Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
             labelForTime.setText("Time:" + Evaluator.countTime(fft.nutritionManager.getCookedMeals()));
             System.out.println(Evaluator.countMoney(fft.nutritionManager.getCookedMeals(), fft.productManager));
-            //System.out.println(Evaluator.countMoneyPlus(fft.nutritionManager.getCookedMeals(), fft.productManager));
+            //System.out.println(model.Evaluator.countMoneyPlus(fft.nutritionManager.getCookedMeals(), fft.productManager));
         });
 
         countPanel.add(button);
@@ -761,7 +762,7 @@ public class GUI {
             if (comboBox.getSelectedItem() == "Nothing") {
                 //fft.nutritionManager.deselectMeal(dayOfTheWeek, numberOfFood);
             } else {
-                fft.nutritionManager.selectMeal(fft.mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
+                //fft.nutritionManager.selectMeal(fft.mealManager.getAvailableMeals().get(comboBox.getSelectedItem()), dayOfTheWeek, numberOfFood);
             }
             this.updateGUI();
         });
@@ -777,5 +778,132 @@ public class GUI {
             panel.add(createChoiceBar(dayOfTheWeek, i));
         }
         return panel;
+    }
+    private JPanel createCalendar(){
+        JPanel mainPanel = new JPanel(new GridLayout());
+
+        JPanel panel = new JPanel(new GridLayout());
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 0));
+
+        for (String nameOfTheDay :fft.nutritionManager.getSelectedMealsMap().keySet()) {
+            panel.add(createDayPlus(nameOfTheDay));
+        }
+
+        JScrollPane scroll = new JScrollPane(panel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+
+        mainPanel.add(scroll);
+
+        return mainPanel;
+    }
+    private JPanel createDayPlus(String dayOfTheWeek){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(2, 1));
+        panel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+
+        JLabel dayLabel = new JLabel(dayOfTheWeek);
+        dayLabel.setSize( new Dimension(100, 200));
+        dayLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+
+
+        JButton addButton = new JButton("Add");
+        addButton.setSize( new Dimension(100, 200));
+        addButton.addActionListener(e -> {
+            CreateComplexMeal meal = new CreateComplexMeal(this,
+                    fft.mealManager.getAvailableMeals().values().toArray(new Meal[0]), dayOfTheWeek,
+                    fft.nutritionManager.getSelectedComplexMealsMap().get(dayOfTheWeek).length);
+            meal.setUpFrame();
+        });
+
+
+        JPanel dayAndAdd = new JPanel(new GridLayout(1, 2));
+        dayAndAdd.setBorder(BorderFactory.createLineBorder(Color.black));
+        dayAndAdd.add(dayLabel);
+
+        dayAndAdd.add(addButton);
+
+
+        JPanel mealsPanel = new JPanel();
+        mealsPanel.setLayout(new BoxLayout(mealsPanel, BoxLayout.Y_AXIS));
+
+        int i = 1;
+        for (ComplexMeal cm : fft.nutritionManager.getSelectedComplexMealsMap().get(dayOfTheWeek)) {
+            mealsPanel.add(createMealOfTheDay(i++, cm, dayOfTheWeek));
+            mealsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        }
+
+        panel.add(dayAndAdd);
+        panel.add(mealsPanel);
+
+        return panel;
+    }
+    private JPanel createMealOfTheDay(int number, ComplexMeal complexMeal, String dayOfTheWeek){
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        GridBagConstraints c = new GridBagConstraints();
+
+        JLabel numberOfMeal = new JLabel(Integer.toString(number));
+        numberOfMeal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        panel.add(numberOfMeal, c);
+
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.addActionListener(e -> {
+            fft.nutritionManager.deleteComplexMeal(dayOfTheWeek, number);
+            updateGUI();
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 1;
+        panel.add(deleteButton, c);
+
+        JPanel mealsList = new JPanel();
+        mealsList.setLayout(new BoxLayout(mealsList, BoxLayout.Y_AXIS));
+
+        for (Meal m : complexMeal.getMeals().keySet()) {
+            JPanel mealRow = new JPanel();
+            mealRow.setLayout(new GridLayout(1, 2));
+
+            JLabel name = new JLabel(m.getName());
+
+            JLabel amount = new JLabel(" x " + complexMeal.getMeals().get(m));
+            mealRow.add(name);
+            mealRow.add(amount);
+
+            mealsList.add(mealRow);
+        }
+        mealsList.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 30));
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 2;
+        c.gridx = 1;
+        c.gridy = 0;
+        panel.add(mealsList, c);
+
+        JButton editButton = new JButton("Edit");
+        editButton.addActionListener(e->{
+            CreateComplexMeal meal = new CreateComplexMeal(this, complexMeal,
+                    fft.mealManager.getAvailableMeals().values().toArray(new Meal[0]), dayOfTheWeek,
+                    number-1);
+            meal.setUpFrame();
+        });
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weighty = 2;
+        c.gridx = 2;
+        c.gridy = 0;
+        panel.add(editButton, c);
+
+
+        return panel;
+    }
+    public void addComplexMeal(ComplexMeal complexMeal, String day, int orderOfComplexMeal){
+        this.fft.nutritionManager.addComplexMeal(complexMeal, day, orderOfComplexMeal);
     }
 }

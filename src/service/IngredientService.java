@@ -1,9 +1,9 @@
+package service;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class IngredientManager implements Serializable {
+public class IngredientService implements Serializable {
     private ArrayList<String> availableIngredients = new ArrayList<>(){
         {
             add("Egg");
@@ -13,10 +13,10 @@ public class IngredientManager implements Serializable {
             add("Salt");
         }
     };
-    public IngredientManager(ArrayList<String> availableIngredients){
+    public IngredientService(ArrayList<String> availableIngredients){
         this.availableIngredients = availableIngredients;
     }
-    public IngredientManager(){}
+    public IngredientService(){}
     public void addIngredient(String ingredient){
         this.availableIngredients.add(ingredient);
     }

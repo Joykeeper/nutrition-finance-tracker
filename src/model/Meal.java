@@ -1,3 +1,5 @@
+package model;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -26,6 +28,6 @@ public class Meal implements Serializable {
     }
 
     public String toString(){
-        return "Meal[" + this.name + "]";
+        return "model.Meal[" + this.name + "]";
     }
 }

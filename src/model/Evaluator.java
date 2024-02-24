@@ -1,3 +1,7 @@
+package model;
+
+import service.ProductService;
+
 import java.util.*;
 
 public class Evaluator {
@@ -9,7 +13,7 @@ public class Evaluator {
         return sum;
     }
 
-    public static float countMoney(ArrayList<Meal> selectedMeals, ProductManager productManager){
+    public static float countMoney(ArrayList<Meal> selectedMeals, ProductService productManager){
         float money = 0;
 
         Map<String, Number> ingredients = getIngredientMap(selectedMeals); // +
@@ -56,7 +60,7 @@ public class Evaluator {
         return countCostForSet(findBestSet(priorityList, amountOfIngredient));
     }
 
-    public static Map<String, Number> getNeededProducts(ArrayList<Meal> selectedMeals,  ArrayList<Product> availableProducts){
+    public static Map<String, Number> getNeededProducts(ArrayList<Meal> selectedMeals, ArrayList<Product> availableProducts){
         Map<String, Number> neededProducts = new HashMap<>();
 
         Map<String, Number> ingredients = getIngredientMap(selectedMeals);

@@ -1,3 +1,5 @@
+package model;
+
 import java.io.Serializable;
 
 public class Ingredient implements Serializable {
