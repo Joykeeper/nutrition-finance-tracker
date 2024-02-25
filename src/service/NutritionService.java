@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NutritionService implements Serializable {
-    Meal nothing = new Meal("Nothing", 0, new HashMap<>(),0);
     Map<String, ComplexMeal[]> selectedMealsMap = new HashMap<>(){
         {
             put("Monday", new ComplexMeal[0]);

@@ -5,6 +5,7 @@ import model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,19 +29,17 @@ public class GUI {
 
         JMenuItem saveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
         saveMenuItem.addActionListener(e -> {
-            JFileChooser fileSave = new JFileChooser();
-            fileSave.showSaveDialog(mainFrame);
-            this.fft.save(fileSave.getSelectedFile());
-            System.out.println("Saved");
+            //JFileChooser fileSave = new JFileChooser();
+            //fileSave.showSaveDialog(mainFrame);
+            this.fft.save(new File("Calendar.cl"));
         });
         menu.add(saveMenuItem);
         JMenuItem loadMenuItem = new JMenuItem("Load", KeyEvent.VK_L);
         loadMenuItem.addActionListener(e -> {
-            JFileChooser fileLoad = new JFileChooser();
-            fileLoad.showSaveDialog(mainFrame);
-            this.fft.load(fileLoad.getSelectedFile());
+            //JFileChooser fileLoad = new JFileChooser();
+            //fileLoad.showSaveDialog(mainFrame);
+            this.fft.load(new File("Calendar.cl"));
             this.updateGUI();
-            System.out.println("Loaded");
         });
         menu.add(loadMenuItem);
 
@@ -854,7 +853,7 @@ public class GUI {
 
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> {
-            fft.nutritionManager.deleteComplexMeal(dayOfTheWeek, number);
+            fft.nutritionManager.deleteComplexMeal(dayOfTheWeek, number-1);
             updateGUI();
         });
 

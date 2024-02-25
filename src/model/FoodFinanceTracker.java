@@ -10,7 +10,7 @@ import service.ProductService;
 import java.io.*;
 import java.util.HashMap;
 
-public class FoodFinanceTracker{
+public class FoodFinanceTracker implements Serializable{
     public IngredientService ingredientManager;
     public ProductService productManager;
     public MealService mealManager;
@@ -66,6 +66,7 @@ public class FoodFinanceTracker{
             ObjectInputStream ois = new ObjectInputStream(fileIn);
 
             this.mealManager = (MealService) ois.readObject();
+            System.out.println(this.mealManager.getAvailableMeals().values());
             this.productManager = (ProductService) ois.readObject();
             this.ingredientManager = (IngredientService) ois.readObject();
             this.nutritionManager = (NutritionService) ois.readObject();

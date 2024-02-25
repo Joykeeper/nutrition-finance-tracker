@@ -28,6 +28,6 @@ public class Meal implements Serializable {
     }
 
     public String toString(){
-        return "model.Meal[" + this.name + "]";
+        return "Meal[" + this.name + "]";
     }
 }
